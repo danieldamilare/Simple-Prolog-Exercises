@@ -1,29 +1,29 @@
 % Dark Tv series Family tree
 
-child(helge_dopler, greta_dopler).
-child(helge_dopler, bernd_dopler).
-child(peter_dopler, helge_dopler).
+child("helge dopler", "greta dopler").
+child("helge dopler", "bernd dopler").
+child("peter dopler", "helge dopler").
 child(elisabeth, charlotte).
-child(elisabeth, peter_dopler).
-child(franziska, peter_dopler).
+child(elisabeth, "peter dopler").
+child(franziska, "peter dopler").
 child(franziska, charlotte).
 child(eric, franziska).
 child(eric, magnus).
-child(claudia_tiedemann, doris_tiedemann).
-child(claudia_tiedemann, egon_tiedemann).
-child(regina_tiedemann, claudia_tiedemann).
-child(bartosz_tiederman, regina_tiedemann).
-child(bartosz_tiederman, aleksander_tiedemann).
+child("claudia tiedemann", "doris tiedemann").
+child("claudia tiedemann", "egon tiedemann").
+child("regina tiedemann", "claudia tiedemann").
+child("bartosz tiederman", "regina tiedemann").
+child("bartosz tiederman", "aleksander tiedemann").
 child(sija, hannah).
-child(sija, egon_tiedemann).
-child(daniel_kahnwald, ines_kahnwald).
+child(sija, "egon tiedemann").
+child("daniel kahnwald", "ines kahnwald").
 child(jonas, hannah).
 child(jonas, michael).
-child(tronte_neilsen, agnes_neilsen).
-child(mads, tronte_neilsen).
-child(mads, jana_neilsen).
-child(ulrich, tronte_neilsen).
-child(ulrich, jana_neilsen).
+child("tronte neilsen", "agnes neilsen").
+child(mads, "tronte neilsen").
+child(mads, "jana neilsen").
+child(ulrich, "tronte neilsen").
+child(ulrich, "jana neilsen").
 child(katharina, helene).
 child(michael, ulrich).
 child(michael, katharina).
@@ -32,37 +32,37 @@ child(martha, ulrich).
 child(magnus, ulrich).
 child(magnus, katharina).
 child(noah, sija).
-child(noah, bartosz_tiederman).
+child(noah, "bartosz tiederman").
 child(charlotte, elisabeth).
 child(charlotte, noah).
-child(erik_obendorf, jurgen_obendorf).
-child(erik_obendorf, ulla_obendorf).
+child("erik obendorf", "jurgen obendorf").
+child("erik obendorf", "ulla obendorf").
 
-male(bernd_dopler).
-male(helge_dopler).
-male(egon_tiedemann).
-male(daniel_kahnwald).
-male(tronte_neilsen).
-male(peter_dopler).
-male(aleksander_tiedemann).
+male("bernd dopler").
+male("helge dopler").
+male("egon tiedemann").
+male("daniel kahnwald").
+male("tronte neilsen").
+male("peter dopler").
+male("aleksander tiedemann").
 male(ulrich).
 male(mads).
-male(bartosz_tiederman).
+male("bartosz tiederman").
 male(jonas).
 male(michael).
 male(magnus).
 male(noah).
 
-female(greta_dopler).
-female(doris_tiedemann).
-female(claudia_tiedemann).
+female("greta dopler").
+female("doris tiedemann").
+female("claudia tiedemann").
 female(sija).
-female(ines_kahnwald).
-female(agnes_neilsen).
-female(jana_neilsen).
+female("ines kahnwald").
+female("agnes neilsen").
+female("jana neilsen").
 female(helene).
 female(charlotte).
-female(regina_tiedemann).
+female("regina tiedemann").
 female(hannah).
 female(katharina).
 female(martha).
@@ -75,7 +75,7 @@ father(X, Y) :- male(X), child(Y, X).
 mother(X, Y) :- female(X), child(Y, X).
 grand_parent(X, Y) :- parent(X, Z), parent(Z, Y).
 grand_father(X, Y) :- father(X, Z), parent(Z, Y).
-great_grand_mother(X, Y) :- mother(X, Z), grand_parent(Z, Y).
+grand_mother(X, Y) :- mother(X, Z), grand_parent(Z, Y).
 sibling(X, Y) :- \+ X= Y, parent(Z, X), parent(Z, Y).
 brother(X, Y) :- male(X), sibling(X, Y).
 sister(X, Y) :- female(X), sibling(X, Y).
@@ -98,3 +98,54 @@ write_child(X, Y) :-
 
 write_descendant_chain(X, Y) :- child(X, Y), write_child(X, Y).
 write_descendant_chain(X, Y) :- child(Z, Y), write_descendant_chain(X, Z), write_child(Z, Y).
+
+
+% prolog lexicon
+
+article(a). article(the). article(and).
+
+common_noun(child, X, Y) :- child(X, Y).
+common_noun(male, X, _) :- male(X).
+common_noun(female, X, _) :- female(X).
+common_noun(son, X, Y) :- male(X), child(X, Y).
+common_noun(daughter, X, Y) :- female(X), child(X, Y).
+common_noun(father, X, Y) :- father(X, Y).
+common_noun(mother, X, Y) :- mother(X, Y).
+common_noun(parent, X, Y) :- parent(X, Y).
+common_noun(brother, X, Y) :- brother(X, Y).
+common_noun(sister, X, Y) :- sister(X, Y).
+common_noun(brother, X, Y) :- brother(X, Y).
+common_noun(cousin, X, Y) :- first_cousin(X, Y).
+common_noun(ancestor, X, Y) :- ancestor(X, Y).
+common_noun(descendant, X, Y) :- ancestor(X, Y).
+common_noun("grand parent", X, Y) :- grand_parent(X, Y).
+common_noun("grand father", X, Y) :- grand_father(X, Y).
+common_noun("grand mother", X, Y) :- grand_mother(X, Y).
+common_noun("grand daughter", X, Y) :- female(X), grand_parent(Y, X).
+common_noun("grand son", X, Y) :- male(X), grand_parent(Y, X).
+common_noun("grand child", X, Y) :- grand_parent(Y, X).
+
+preposition(of).
+proper_noun(X, X) :- \+ article(X), \+ preposition(X), \+ common_noun(X, _, _).
+
+np([Name], X)  :- proper_noun(Name, X).
+np([Article, Noun | Rest], X) :- 
+    article(Article), 
+    common_noun(Noun, X, Y),
+    pp(Rest, Y).
+
+pp([Prep|Rest], Y) :-
+    preposition(Prep),
+    np(Rest, Y).
+
+ask_question([who | Question], X) :- wh(Question, X).
+
+ask_question([is | Question], X) :- yn(Question).
+
+wh([is | Question], X) :- np(Question, X).
+
+yn(Question) :-
+    append(Start, End, Question),
+    np(Start, X),
+    np(End, X).
+
