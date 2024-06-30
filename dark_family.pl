@@ -38,6 +38,14 @@ child(charlotte, noah).
 child("erik obendorf", "jurgen obendorf").
 child("erik obendorf", "ulla obendorf").
 
+married("bernd dopler", "greta dopler").
+married("doris tiedemann", "egon tiedemann").
+married(ulrich, katharina).
+married(hannah, micahel).
+married("jurgen obendorf", "ulla obendorf").
+married("regina tiedemann", "aleksander tiedemann").
+married("tronte nielsen", "jana nielsen").
+married("peter doppler", charlotte).
 male("bernd dopler").
 male("helge dopler").
 male("egon tiedemann").
@@ -69,6 +77,15 @@ female(martha).
 female(elisabeth).
 female(franziska).
 
+person(X) :- male(X).
+person(X) :- female(X).
+
+
+husband(X, Y) :- married(X, Y), male(X).
+husband(X, Y) :- married(Y, X), male(X).
+
+wife(X, Y) :- married(X, Y), female(X).
+wife(X, Y) :- married(Y, X), female(X).
 
 parent(X, Y) :- child(Y, X).
 father(X, Y) :- male(X), child(Y, X).
@@ -76,11 +93,11 @@ mother(X, Y) :- female(X), child(Y, X).
 grand_parent(X, Y) :- parent(X, Z), parent(Z, Y).
 grand_father(X, Y) :- father(X, Z), parent(Z, Y).
 grand_mother(X, Y) :- mother(X, Z), grand_parent(Z, Y).
-sibling(X, Y) :- \+ X= Y, parent(Z, X), parent(Z, Y).
+sibling(X, Y) :- person(X), person(Y), \+ X= Y, parent(Z, X), parent(Z, Y).
 brother(X, Y) :- male(X), sibling(X, Y).
 sister(X, Y) :- female(X), sibling(X, Y).
 full_sibling(X, Y) :- parent(Z, X), parent(Z, Y), parent(T, X), parent(T, Y), \+ T=Z.
-half_sibling(X, Y) :- sibling(X, Y), parent(Z, X), parent(T, Y), \+ T= Y.
+half_sibling(X, Y) :- sibling(X, Y), \+ full_sibling(X, Y).
 first_cousin(X, Y) :- parent(Z, X), parent(T, Y), \+ Z = T, sibling(Z, T).
 second_cousin(X, Y) :- parent(Z, X), parent(T, Y), \+ T = Z, first_cousin(T, Z).
 half_first_cousin(X, Y) :- parent(Z, X), parent(T, Y), \+ Z = T, half_sibling(Z, T).
@@ -144,8 +161,8 @@ ask_question([is | Question], X) :- yn(Question).
 
 wh([is | Question], X) :- np(Question, X).
 
+
 yn(Question) :-
     append(Start, End, Question),
     np(Start, X),
     np(End, X).
-
