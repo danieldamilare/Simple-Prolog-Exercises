@@ -1,4 +1,8 @@
 % The three-coins problem formulated for the general planner
+% Imagine coins arranged with heads and tails. eg H, H, T. Make them 
+% all the same (that is, either all heads or all tails) using exactly
+% three moves. A move here means turning over one of the coin (so that
+% a head becomes a tail and a tail becomes a head).
 
 initial_state([h, h, t]).
 
