@@ -4,6 +4,12 @@
 % -  goal_state(State).
 
 %plan(L) : L is a list of moves from the inital state to the goal state.
+%
+bplan(L) :- tryplan([], L).
+% tryplan(X, L) : L is a plan and has X as its final elements.
+tryplan(L, L) :-  plan(L).
+tryplan(X, L) :- tryplan([_|X], L).
+
 plan(L) :- initial_state(I), goal_state(G), reachable(I, L, G).
 
 % reachable(S1, L, S2) : S2 is reachable from S1 using moves L
