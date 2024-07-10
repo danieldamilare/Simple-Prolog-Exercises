@@ -107,9 +107,10 @@ cousin(X, Y) :- parent(Z, X), parent(T, Y), \+ T = Z, cousin(Z, T).
 descendant(X, Y) :- child(X, Y).
 descendant(X, Y) :- child(Z, Y), descendant(X, Z).
 % common_ancestor(Y, Z) :- parent(V, Y), parent(W, Z), V=W.
-% closest_common_ancestor(X, Y, Z) :- 
+closest_common_ancestor(X, Y, Z) :-  ancestor(X, Y), ancestor(X, Z), child(M, X), \+ closest_common_ancestor(M, Y, Z).
 
 ancestor(X, Y) :- descendant(Y, X).
+
 write_child(X, Y) :-
     write(X), write(' is a child of '), write(Y), nl.
 
