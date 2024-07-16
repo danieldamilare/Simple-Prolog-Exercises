@@ -17,3 +17,5 @@ plan(L) :- initial_state(I), goal_state(G), reachable(I, L, G).
 reachable(S, [], S).
 
 reachable(S1, [M|L], S3) :-legal_move(S1, M, S2), reachable(S2, L, S3). 
+
+reachable_list(S1, [], [], S2).

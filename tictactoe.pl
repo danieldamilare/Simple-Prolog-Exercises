@@ -1,6 +1,6 @@
 player(x). player(o).
 
-initial_state([-, -, -, -, -, -, -, -, -], x).
+initial_state([o, o, -, -, -, -, -, -, -], x).
 
 game_over(S, _, Q) :- three_in_row(S, Q).
 game_over(S, _, neither) :- \+ legal_move(S, _, _, _).

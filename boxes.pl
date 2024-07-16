@@ -14,3 +14,18 @@ game_over(St, _, W) :-
 owns(P, Sq, [draw(P, L)| St]) :- last_avail_line(L, Sq, St).
 owns(P, Sq, [_| St]) :- owns(P, Sq, St).
 
+% Line L is available and is the last of square not yet drawn
+last_avail_line(L, Sq, St) :-
+    avail_line(L, Sq, St), \+ avail_line(_, Sq, [draw(_, L) | St]).
+
+% Line L is from Sq and not yet drawn in state St
+avail_line(L, Sq, St) :- 
+    square_lines(Sq, Ls), member(L, Ls), \+ member(draw(_, L), St).
+
+% The legal moves
+legal_move(St, P, [L], [draw(P, L) | St]) :- 
+    avail_line(L, _, St).
+
+legal_move(St, P, [L|Rest], New) :-
+    last_avail_line(L, _, St), legal_move([draw(P, L)|St], P, Rest, New).
+
